@@ -16,17 +16,79 @@ android {
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
     }
+
+    repositories {
+
+        mavenCentral()
+        jcenter()
+        google()
+
+    }
+
+    defaultConfig {
+        vectorDrawables.useSupportLibrary = true
+    }
+
+    defaultConfig {
+        // Stops the Gradle plugin's automatic rasterization of vectors
+        generatedDensities = []
+    }
+
+    // Flag to tell aapt to keep the attribute ids around
+    aaptOptions {
+        additionalParameters "--no-version-vectors"
+    }
+
+    buildTypes {
+
+        def OPEN_MOVIES_MAP_KEY = "OPEN_MOVIES_MAP_KEY"
+        def OPEN_URL_PATTERN = "OPEN_URL_PATTERN"
+        def OPEN_URL_IMAGEN = "OPEN_URL_IMAGEN"
+        def OPEN_URL_YOUTUBE = "OPEN_URL_YOUTUBE"
+        def OPEN_URL_YOUTUBE_TWO = "OPEN_URL_YOUTUBE_TWO"
+
+        debug {
+            buildConfigField("String", OPEN_MOVIES_MAP_KEY, "\"850a3f6ee937c3f17c16c908a15aa6ac\"")
+            buildConfigField("String", OPEN_URL_PATTERN, "\"https://api.themoviedb.org/3/movie/\"")
+            buildConfigField("String", OPEN_URL_IMAGEN, "\"http://image.tmdb.org/t/p/w185//\"")
+            buildConfigField("String", OPEN_URL_YOUTUBE, "\"https://www.youtube.com/embed/\"")
+            buildConfigField("String", OPEN_URL_YOUTUBE_TWO, "\"https://www.youtube.com/watch?v=\"")
+        }
+        release {
+            buildConfigField("String", OPEN_MOVIES_MAP_KEY, "\"850a3f6ee937c3f17c16c908a15aa6ac\"")
+            buildConfigField("String", OPEN_URL_PATTERN, "\"https://api.themoviedb.org/3/movie/\"")
+            buildConfigField("String", OPEN_URL_IMAGEN, "\"http://image.tmdb.org/t/p/w185//\"")
+            buildConfigField("String", OPEN_URL_YOUTUBE, "\"https://www.youtube.com/embed/\"")
+            buildConfigField("String", OPEN_URL_YOUTUBE_TWO, "\"https://www.youtube.com/watch?v=\"")
+        }
+    }
 }
 
 dependencies {
+    def lifecycle_version = "1.1.1"
+    def room_version = "1.1.1"
+
     implementation fileTree(dir: 'libs', include: ['*.jar'])
-    implementation 'com.android.support:appcompat-v7:28.0.0'
-    implementation 'com.android.support:support-v4:28.0.0'
-    implementation 'com.android.support:design:28.0.0'
-    implementation 'com.android.support:cardview-v7:28.0.0'
-    implementation 'com.android.support:recyclerview-v7:28.0.0'
+    //noinspection GradleCompatible
+    implementation 'com.android.support:appcompat-v7:28.0.0-alpha1'
+    implementation 'com.android.support:support-v4:28.0.0-alpha1'
+    implementation 'com.android.support:design:28.0.0-alpha1'
+    implementation 'com.android.support:cardview-v7:28.0.0-alpha1'
+    implementation 'com.android.support:recyclerview-v7:28.0.0-alpha1'
     implementation 'com.android.support.constraint:constraint-layout:1.1.3'
     testImplementation 'junit:junit:4.12'
     androidTestImplementation 'com.android.support.test:runner:1.0.2'
     androidTestImplementation 'com.android.support.test.espresso:espresso-core:3.0.2'
+
+    implementation "android.arch.lifecycle:extensions:$lifecycle_version"
+    annotationProcessor "android.arch.lifecycle:compiler:$lifecycle_version"
+
+    implementation "android.arch.persistence.room:runtime:$room_version"
+    annotationProcessor "android.arch.persistence.room:compiler:$room_version"
+
+    implementation 'com.squareup.picasso:picasso:2.71828'
+    implementation 'com.jakewharton:butterknife:8.5.1'
+    annotationProcessor 'com.jakewharton:butterknife-compiler:8.5.1'
+    implementation 'com.squareup.retrofit2:retrofit:2.4.0'
+    implementation 'com.squareup.retrofit2:converter-gson:2.1.0'
 }
