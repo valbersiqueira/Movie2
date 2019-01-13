@@ -6,9 +6,12 @@ import android.os.Parcelable;
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
+import java.util.ArrayList;
 import java.util.List;
 
-public class ResultMovie implements Parcelable{
+import br.com.valber.movie.entity.Movie;
+
+public class ResultMovieJSON implements Parcelable{
     @SerializedName("page")
     @Expose
     private Integer page;
@@ -21,9 +24,9 @@ public class ResultMovie implements Parcelable{
 
     @SerializedName("results")
     @Expose
-    private List<MovieJSON> movieJSONS = null;
+    private List<MovieJSON> Movies = null;
 
-    protected ResultMovie(Parcel in) {
+    protected ResultMovieJSON(Parcel in) {
         if (in.readByte() == 0) {
             page = null;
         } else {
@@ -41,15 +44,15 @@ public class ResultMovie implements Parcelable{
         }
     }
 
-    public static final Creator<ResultMovie> CREATOR = new Creator<ResultMovie>() {
+    public static final Creator<ResultMovieJSON> CREATOR = new Creator<ResultMovieJSON>() {
         @Override
-        public ResultMovie createFromParcel(Parcel in) {
-            return new ResultMovie(in);
+        public ResultMovieJSON createFromParcel(Parcel in) {
+            return new ResultMovieJSON(in);
         }
 
         @Override
-        public ResultMovie[] newArray(int size) {
-            return new ResultMovie[size];
+        public ResultMovieJSON[] newArray(int size) {
+            return new ResultMovieJSON[size];
         }
     };
 
@@ -77,12 +80,12 @@ public class ResultMovie implements Parcelable{
         this.totalPages = totalPages;
     }
 
-    public List<MovieJSON> getMovieJSONS() {
-        return movieJSONS;
+    public List<MovieJSON> getMovies() {
+        return Movies;
     }
 
-    public void setMovieJSONS(List<MovieJSON> movieJSONS) {
-        this.movieJSONS = movieJSONS;
+    public void setMovies(List<MovieJSON> movies) {
+        Movies = movies;
     }
 
     @Override
@@ -111,4 +114,5 @@ public class ResultMovie implements Parcelable{
             parcel.writeInt(totalPages);
         }
     }
+
 }

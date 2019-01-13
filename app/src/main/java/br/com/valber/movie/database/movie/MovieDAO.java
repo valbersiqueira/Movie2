@@ -22,6 +22,6 @@ public interface MovieDAO {
     @Query("DELETE FROM movie")
     void deleteAll();
 
-    @Query("SELECT * FROM movie ORDER BY releaseDate")
+    @Query("SELECT * FROM movie")
     LiveData<List<Movie>> getAll();
 }

@@ -22,4 +22,12 @@ public class MovieViewModel extends AndroidViewModel{
     public LiveData<List<Movie>> getAll() {
         return dao.getAll();
     }
+
+    public Dao getDao() {
+        return dao;
+    }
+
+    public void setDao(Dao dao) {
+        this.dao = dao;
+    }
 }

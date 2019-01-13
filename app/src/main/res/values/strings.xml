@@ -1,3 +1,10 @@
 <resources>
     <string name="app_name">Movie</string>
+
+    <string name="nota">Nota:</string>
+    <string name="qtd_votos">Votos:</string>
+    <string name="title_origi">Titúlo Original:</string>
+
+    //send objeto to class
+    <string name="movie_send">MOVIE</string>
 </resources>

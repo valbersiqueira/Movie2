@@ -1,14 +1,13 @@
 package br.com.valber.movie.json;
 
-import android.arch.persistence.room.PrimaryKey;
 import android.os.Parcel;
 import android.os.Parcelable;
 
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
-import java.util.Date;
 import java.util.List;
+
 public class MovieJSON implements Parcelable {
 
     @SerializedName("vote_count")
@@ -16,7 +15,6 @@ public class MovieJSON implements Parcelable {
     private Integer voteCount;
     @SerializedName("id")
     @Expose
-    @PrimaryKey
     private Integer id;
     @SerializedName("video")
     @Expose
@@ -55,7 +53,8 @@ public class MovieJSON implements Parcelable {
     @Expose
     private String releaseDate;
 
-    private Date dataSave;
+    public MovieJSON() {
+    }
 
     protected MovieJSON(Parcel in) {
         if (in.readByte() == 0) {
@@ -215,13 +214,6 @@ public class MovieJSON implements Parcelable {
         this.releaseDate = releaseDate;
     }
 
-    public Date getDataSave() {
-        return dataSave;
-    }
-
-    public void setDataSave(Date dataSave) {
-        this.dataSave = dataSave;
-    }
 
     @Override
     public int describeContents() {
