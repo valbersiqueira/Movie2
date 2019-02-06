@@ -13,6 +13,7 @@ public class MovieRepository implements Dao<Movie> {
 
     private MovieDAO movieDAO;
     private LiveData<List<Movie>> getAll;
+    private LiveData<Movie> getMovie;
 
     public MovieRepository(Application application) {
         MovieDatabase movieDatabase = MovieDatabase.getInstance(application);
@@ -26,13 +27,23 @@ public class MovieRepository implements Dao<Movie> {
     }
 
     @Override
+    public void delete(Movie movie) {
+        new Delete(movieDAO).execute(movie.getId());
+    }
+
+    @Override
+    public LiveData<Movie> select(Movie movie) {
+        return this.getMovie = movieDAO.getMovie(movie.getId());
+    }
+
+    @Override
     public void update(Movie movie) {
         new UpdateAsync(movieDAO).execute(movie);
     }
 
     @Override
     public void deleteAll() {
-        new DelteAlltAsync(movieDAO).execute();
+        new DeleteAlltAsync(movieDAO).execute();
     }
 
     @Override
@@ -70,11 +81,11 @@ public class MovieRepository implements Dao<Movie> {
         }
     }
 
-    public static class DelteAlltAsync extends AsyncTask<Void, Void, Void> {
+    public static class DeleteAlltAsync extends AsyncTask<Void, Void, Void> {
 
         private MovieDAO movieDAO;
 
-        public DelteAlltAsync(MovieDAO movieDAO) {
+        public DeleteAlltAsync(MovieDAO movieDAO) {
             this.movieDAO = movieDAO;
         }
 
@@ -84,5 +95,21 @@ public class MovieRepository implements Dao<Movie> {
             return null;
         }
     }
+
+    public static class Delete extends AsyncTask<Integer, Void, Void> {
+        private  MovieDAO movieDAO;
+
+        public Delete(MovieDAO movieDAO) {
+            this.movieDAO = movieDAO;
+        }
+
+
+        @Override
+        protected Void doInBackground(Integer... integers) {
+            movieDAO.delete(integers[0]);
+            return null;
+        }
+    }
+
 
 }

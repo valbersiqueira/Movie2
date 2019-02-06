@@ -30,4 +30,10 @@ public class MovieViewModel extends AndroidViewModel{
     public void setDao(Dao dao) {
         this.dao = dao;
     }
+
+    public void save(Movie movie){
+        dao.save(movie);
+    }
+
+    public void
 }

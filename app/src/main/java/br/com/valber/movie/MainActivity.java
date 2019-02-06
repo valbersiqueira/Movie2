@@ -1,7 +1,10 @@
 package br.com.valber.movie;
 
 import android.arch.lifecycle.ViewModelProviders;
+import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
+import android.os.Build;
 import android.os.Parcelable;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -72,7 +75,7 @@ public class MainActivity extends AppCompatActivity {
 
         @Nullable
         @Override
-        public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
+        public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable final Bundle savedInstanceState) {
             View view = inflater.inflate(R.layout.fragmente_main, container, false);
 
             unbinder = ButterKnife.bind(this, view);
@@ -90,23 +93,53 @@ public class MainActivity extends AppCompatActivity {
                 }
             });
             recyclerView.setAdapter(adapterMovie);
+            if (getPagePreference() != 1){
+                savePreference(1);
+            }
+            final int page = getPagePreference();
 
             movieViewModel = ViewModelProviders.of(this).get(MovieViewModel.class);
             if (savedInstanceState != null) {
                 moviesSaveInstance = savedInstanceState.getParcelableArrayList(OBJ_SAVE_INSTANCE);
             } else {
-                executeAsyc(View.VISIBLE);
+                executeAsyc(View.VISIBLE, page);
             }
 
             refreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
                 @Override
                 public void onRefresh() {
-                    executeAsyc(View.INVISIBLE);
+                    executeAsyc(View.INVISIBLE, 1);
                 }
             });
 
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                recyclerView.setOnScrollChangeListener(new View.OnScrollChangeListener() {
+                    @Override
+                    public void onScrollChange(View view, int i, int i1, int i2, int i3) {
+                        GridLayoutManager layoutManager = (GridLayoutManager) recyclerView.getLayoutManager();
+                        if (moviesSaveInstance.size() == layoutManager.findLastCompletelyVisibleItemPosition() +1){
+                            int page = getPagePreference();
+                            savePreference(page+1);
+                            executeAsyc(View.VISIBLE, page+1);
+                        }
+                    }
+                });
+            } else {
+                recyclerView.setOnScrollListener(new RecyclerView.OnScrollListener() {
+                    @Override
+                    public void onScrolled(@NonNull RecyclerView recyclerView, int dx, int dy) {
+                        super.onScrolled(recyclerView, dx, dy);
+                        GridLayoutManager layoutManager = (GridLayoutManager) recyclerView.getLayoutManager();
+                        if (moviesSaveInstance.size() == layoutManager.findLastCompletelyVisibleItemPosition() +1){
+                            recyclerView.setVisibility(View.INVISIBLE);
+                            int page = getPagePreference();
+                            savePreference(page+1);
+                            executeAsyc(View.VISIBLE, page+1);
+                        }
+                    }
+                });
+            }
             setHasOptionsMenu(true);
-
             return view;
         }
 
@@ -127,10 +160,10 @@ public class MainActivity extends AppCompatActivity {
             super.onSaveInstanceState(outState);
         }
 
-        private void executeAsyc(int valueProgressBar) {
+        private void executeAsyc(int valueProgressBar, int page) {
             movieViewModel.getDao().deleteAll();
             progressBar.setVisibility(valueProgressBar);
-            new AsyncMovies(this).execute(1);
+            new AsyncMovies(this).execute(page);
         }
 
         @Override
@@ -138,7 +171,11 @@ public class MainActivity extends AppCompatActivity {
             progressBar.setVisibility(View.INVISIBLE);
             refreshLayout.setRefreshing(false);
             ResultMovieJSON json = (ResultMovieJSON) object;
-            moviesSaveInstance = preencherMovieBd(json.getMovies());
+            if (moviesSaveInstance == null){
+                moviesSaveInstance = preencherMovieBd(json.getMovies());
+            } else {
+                moviesSaveInstance.addAll(preencherMovieBd(json.getMovies()));
+            }
             adapterMovie.submitList(moviesSaveInstance);
         }
 
@@ -187,6 +224,19 @@ public class MainActivity extends AppCompatActivity {
                 default:
                     return true;
             }
+        }
+
+        private void savePreference(int value){
+            SharedPreferences preferences = getActivity().getPreferences(Context.MODE_PRIVATE);
+            SharedPreferences.Editor editor = preferences.edit();
+            editor.putInt(String.valueOf(R.string.put_page_key), value);
+            editor.commit();
+        }
+
+        private int getPagePreference(){
+            SharedPreferences preferences = getActivity().getPreferences(Context.MODE_PRIVATE);
+            int defaultValue = 1;
+            return preferences.getInt(String.valueOf(R.string.put_page_key), defaultValue);
         }
 
     }

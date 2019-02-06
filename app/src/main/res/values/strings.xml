@@ -6,5 +6,5 @@
     <string name="title_origi">Titúlo Original:</string>
 
     //send objeto to class
-    <string name="movie_send">MOVIE</string>
+    <string name="put_page_key">1</string>
 </resources>

@@ -24,4 +24,10 @@ public interface MovieDAO {
 
     @Query("SELECT * FROM movie")
     LiveData<List<Movie>> getAll();
+
+    @Query("SELECT * FROM movie where id = :id")
+    LiveData<Movie> getMovie(int id);
+
+    @Query("DELETE FROM movie where id = :id")
+    void delete(int id);
 }
