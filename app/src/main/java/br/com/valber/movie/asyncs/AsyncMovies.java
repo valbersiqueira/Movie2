@@ -11,7 +11,7 @@ import br.com.valber.movie.entity.Movie;
 import br.com.valber.movie.json.JsonConverter;
 import br.com.valber.movie.json.MoviesService;
 import br.com.valber.movie.json.ResultMovieJSON;
-import br.com.valber.movie.utuls.ResultAsync;
+import br.com.valber.movie.utils.ResultAsync;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;

@@ -1,10 +1,9 @@
-package br.com.valber.movie.utuls;
+package br.com.valber.movie.utils;
 
 import android.arch.lifecycle.LiveData;
 
 import java.util.List;
 
-import br.com.valber.movie.entity.Movie;
 
 public interface Dao<T> {
 
@@ -12,7 +11,7 @@ public interface Dao<T> {
 
     void delete(T t);
 
-    T select(T t);
+    LiveData<T> select(T t);
 
     void update(T t);
 

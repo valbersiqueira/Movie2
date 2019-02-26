@@ -15,7 +15,6 @@ import android.os.Bundle;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.DisplayMetrics;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -34,13 +33,11 @@ import br.com.valber.movie.database.movie.MovieViewModel;
 import br.com.valber.movie.entity.Movie;
 import br.com.valber.movie.json.MovieJSON;
 import br.com.valber.movie.json.ResultMovieJSON;
-import br.com.valber.movie.utuls.ResultAsync;
-import br.com.valber.movie.utuls.SendObjeto;
+import br.com.valber.movie.utils.ResultAsync;
+import br.com.valber.movie.utils.SendObjeto;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.Unbinder;
-import butterknife.internal.Utils;
-import okhttp3.internal.Util;
 
 public class MainActivity extends AppCompatActivity {
 

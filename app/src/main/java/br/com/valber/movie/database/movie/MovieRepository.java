@@ -2,12 +2,14 @@ package br.com.valber.movie.database.movie;
 
 import android.app.Application;
 import android.arch.lifecycle.LiveData;
+import android.arch.lifecycle.MutableLiveData;
+import android.arch.lifecycle.Transformations;
 import android.os.AsyncTask;
 
 import java.util.List;
 
 import br.com.valber.movie.entity.Movie;
-import br.com.valber.movie.utuls.Dao;
+import br.com.valber.movie.utils.Dao;
 
 public class MovieRepository implements Dao<Movie> {
 
@@ -32,8 +34,9 @@ public class MovieRepository implements Dao<Movie> {
     }
 
     @Override
-    public LiveData<Movie> select(Movie movie) {
-        return this.getMovie = movieDAO.getMovie(movie.getId());
+    public LiveData<Movie> select(final Movie movie) {
+        MutableLiveData<Integer> id = new MutableLiveData<>();
+        return Transformations.switchMap(id, userId -> movieDAO.getMovie(movie.getId()));
     }
 
     @Override
@@ -50,6 +53,8 @@ public class MovieRepository implements Dao<Movie> {
     public LiveData<List<Movie>> getAll() {
         return this.getAll;
     }
+
+
 
     public static class InsertAsync extends AsyncTask<Movie, Void, Void> {
 
@@ -107,6 +112,21 @@ public class MovieRepository implements Dao<Movie> {
         @Override
         protected Void doInBackground(Integer... integers) {
             movieDAO.delete(integers[0]);
+            return null;
+        }
+    }
+
+    public static class GetId extends AsyncTask<Integer, Void, Void> {
+        private  MovieDAO movieDAO;
+
+        public GetId(MovieDAO movieDAO) {
+            this.movieDAO = movieDAO;
+        }
+
+
+        @Override
+        protected Void doInBackground(Integer... integers) {
+            movieDAO.getMovie(integers[0]);
             return null;
         }
     }

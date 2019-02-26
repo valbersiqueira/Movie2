@@ -1,4 +1,4 @@
-package br.com.valber.movie.utuls;
+package br.com.valber.movie.utils;
 
 public class SendObjeto {
 

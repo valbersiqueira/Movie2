@@ -8,7 +8,7 @@ import android.support.annotation.NonNull;
 import java.util.List;
 
 import br.com.valber.movie.entity.Movie;
-import br.com.valber.movie.utuls.Dao;
+import br.com.valber.movie.utils.Dao;
 
 public class MovieViewModel extends AndroidViewModel{
 
@@ -35,5 +35,8 @@ public class MovieViewModel extends AndroidViewModel{
         dao.save(movie);
     }
 
-    public void
+    public LiveData<Movie> getMovie(Movie movie) {
+        return dao.select(movie);
+    }
+
 }

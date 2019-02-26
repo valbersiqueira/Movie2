@@ -1,4 +1,4 @@
-package br.com.valber.movie.utuls;
+package br.com.valber.movie.utils;
 
 import android.arch.persistence.room.TypeConverter;
 

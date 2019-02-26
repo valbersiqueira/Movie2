@@ -10,7 +10,7 @@ import android.support.annotation.RequiresApi;
 import java.util.Date;
 import java.util.Objects;
 
-import br.com.valber.movie.utuls.Dataconverter;
+import br.com.valber.movie.utils.Dataconverter;
 
 @Entity(tableName = "movie")
 @TypeConverters(Dataconverter.class)

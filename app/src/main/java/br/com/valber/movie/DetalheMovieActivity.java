@@ -17,10 +17,9 @@ import android.widget.TextView;
 
 import com.squareup.picasso.Picasso;
 
-import br.com.valber.movie.database.movie.MovieRepository;
 import br.com.valber.movie.database.movie.MovieViewModel;
 import br.com.valber.movie.entity.Movie;
-import br.com.valber.movie.utuls.SendObjeto;
+import br.com.valber.movie.utils.SendObjeto;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.Unbinder;
@@ -78,6 +77,7 @@ public class DetalheMovieActivity extends AppCompatActivity {
             votos.setText(movie.getVoteCount()+"");
             setHasOptionsMenu(true);
             movieViewModel = ViewModelProviders.of(getActivity()).get(MovieViewModel.class);
+//            movieViewModel.
             return view;
         }
 
