@@ -15,7 +15,6 @@ public class MovieRepository implements Dao<Movie> {
 
     private MovieDAO movieDAO;
     private LiveData<List<Movie>> getAll;
-    private LiveData<Movie> getMovie;
 
     public MovieRepository(Application application) {
         MovieDatabase movieDatabase = MovieDatabase.getInstance(application);
@@ -36,7 +35,8 @@ public class MovieRepository implements Dao<Movie> {
     @Override
     public LiveData<Movie> select(final Movie movie) {
         MutableLiveData<Integer> id = new MutableLiveData<>();
-        return Transformations.switchMap(id, userId -> movieDAO.getMovie(movie.getId()));
+        id.setValue(movie.getId());
+        return Transformations.switchMap(id, userId -> movieDAO.getMovie(userId));
     }
 
     @Override
@@ -115,21 +115,5 @@ public class MovieRepository implements Dao<Movie> {
             return null;
         }
     }
-
-    public static class GetId extends AsyncTask<Integer, Void, Void> {
-        private  MovieDAO movieDAO;
-
-        public GetId(MovieDAO movieDAO) {
-            this.movieDAO = movieDAO;
-        }
-
-
-        @Override
-        protected Void doInBackground(Integer... integers) {
-            movieDAO.getMovie(integers[0]);
-            return null;
-        }
-    }
-
 
 }

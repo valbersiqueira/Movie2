@@ -27,10 +27,6 @@ public class MovieViewModel extends AndroidViewModel{
         return dao;
     }
 
-    public void setDao(Dao dao) {
-        this.dao = dao;
-    }
-
     public void save(Movie movie){
         dao.save(movie);
     }
@@ -39,4 +35,7 @@ public class MovieViewModel extends AndroidViewModel{
         return dao.select(movie);
     }
 
+    public void delete(Movie movie) {
+        dao.delete(movie);
+    }
 }

@@ -35,6 +35,7 @@ import br.com.valber.movie.json.MovieJSON;
 import br.com.valber.movie.json.ResultMovieJSON;
 import br.com.valber.movie.utils.ResultAsync;
 import br.com.valber.movie.utils.SendObjeto;
+import br.com.valber.movie.utils.UtilsView;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.Unbinder;
@@ -60,6 +61,8 @@ public class MainActivity extends AppCompatActivity {
         private GridLayoutManager layoutManager;
         private AdapterMovie adapterMovie;
         private List<Movie> moviesSaveInstance;
+        private Boolean isFavorite= false;
+        private Boolean isAtualizarList = true;
 
         @BindView(R.id.swip_refresh)
         SwipeRefreshLayout refreshLayout;
@@ -77,7 +80,8 @@ public class MainActivity extends AppCompatActivity {
 
             unbinder = ButterKnife.bind(this, view);
 
-            layoutManager = new GridLayoutManager(getContext(), getOfColuns());
+            layoutManager = new GridLayoutManager(getContext(),
+                    UtilsView.getNumberColumns(new DisplayMetrics(), getActivity()));
             recyclerView.setHasFixedSize(true);
             recyclerView.setLayoutManager(layoutManager);
             adapterMovie = new AdapterMovie();
@@ -89,13 +93,13 @@ public class MainActivity extends AppCompatActivity {
                     startActivity(intent);
                 }
             });
-            recyclerView.setAdapter(adapterMovie);
+            recyclerView.swapAdapter(adapterMovie, false);
             if (getPagePreference() != 1){
                 savePreference(1);
             }
             final int page = getPagePreference();
 
-            movieViewModel = ViewModelProviders.of(this).get(MovieViewModel.class);
+            movieViewModel = ViewModelProviders.of(getActivity()).get(MovieViewModel.class);
             if (savedInstanceState != null) {
                 moviesSaveInstance = savedInstanceState.getParcelableArrayList(OBJ_SAVE_INSTANCE);
             } else {
@@ -105,7 +109,12 @@ public class MainActivity extends AppCompatActivity {
             refreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
                 @Override
                 public void onRefresh() {
-                    executeAsyc(View.INVISIBLE, 1);
+                    if (!isFavorite) {
+                        isAtualizarList = true;
+                        executeAsyc(View.INVISIBLE, 1);
+                    } else {
+                        refreshLayout.setRefreshing(false);
+                    }
                 }
             });
 
@@ -114,10 +123,10 @@ public class MainActivity extends AppCompatActivity {
                     @Override
                     public void onScrollChange(View view, int i, int i1, int i2, int i3) {
                         GridLayoutManager layoutManager = (GridLayoutManager) recyclerView.getLayoutManager();
-                        if (moviesSaveInstance.size() == layoutManager.findLastCompletelyVisibleItemPosition() +1){
-                            int page = getPagePreference();
-                            savePreference(page+1);
-                            executeAsyc(View.VISIBLE, page+1);
+                        if (!isFavorite) {
+                            if (moviesSaveInstance.size() == layoutManager.findLastCompletelyVisibleItemPosition() + 1) {
+                                carregarScroll();
+                            }
                         }
                     }
                 });
@@ -127,17 +136,22 @@ public class MainActivity extends AppCompatActivity {
                     public void onScrolled(@NonNull RecyclerView recyclerView, int dx, int dy) {
                         super.onScrolled(recyclerView, dx, dy);
                         GridLayoutManager layoutManager = (GridLayoutManager) recyclerView.getLayoutManager();
-                        if (moviesSaveInstance.size() == layoutManager.findLastCompletelyVisibleItemPosition() +1){
-                            recyclerView.setVisibility(View.INVISIBLE);
-                            int page = getPagePreference();
-                            savePreference(page+1);
-                            executeAsyc(View.VISIBLE, page+1);
+                        if (!isFavorite) {
+                            if (moviesSaveInstance.size() == layoutManager.findLastCompletelyVisibleItemPosition() + 1) {
+                                carregarScroll();
+                            }
                         }
                     }
                 });
             }
             setHasOptionsMenu(true);
             return view;
+        }
+
+        @Override
+        public void onResume() {
+            super.onResume();
+            adapterMovie.notifyItemRangeRemoved(0, adapterMovie.getItemCount());
         }
 
         @Override
@@ -148,6 +162,7 @@ public class MainActivity extends AppCompatActivity {
         @Override
         public void onDestroyView() {
             super.onDestroyView();
+            savePreference(1);
             unbinder.unbind();
         }
 
@@ -158,7 +173,6 @@ public class MainActivity extends AppCompatActivity {
         }
 
         private void executeAsyc(int valueProgressBar, int page) {
-            movieViewModel.getDao().deleteAll();
             progressBar.setVisibility(valueProgressBar);
             new AsyncMovies(this).execute(page);
         }
@@ -166,24 +180,18 @@ public class MainActivity extends AppCompatActivity {
         @Override
         public void resultMovie(Object object) {
             progressBar.setVisibility(View.INVISIBLE);
+            recyclerView.setVisibility(View.VISIBLE);
             refreshLayout.setRefreshing(false);
             ResultMovieJSON json = (ResultMovieJSON) object;
             if (moviesSaveInstance == null){
                 moviesSaveInstance = preencherMovieBd(json.getMovies());
             } else {
+                if (isAtualizarList) {
+                    moviesSaveInstance.clear();
+                }
                 moviesSaveInstance.addAll(preencherMovieBd(json.getMovies()));
             }
             adapterMovie.submitList(moviesSaveInstance);
-        }
-
-        private int getOfColuns() {
-            DisplayMetrics metrics = new DisplayMetrics();
-            getActivity().getWindowManager().getDefaultDisplay().getMetrics(metrics);
-            int wintDriver = 400;
-            int width = metrics.widthPixels;
-            int nColuns = (width / wintDriver);
-            if (nColuns < 2) return 2;
-            return nColuns;
         }
 
         private List<Movie> preencherMovieBd(List<MovieJSON> jsonList) {
@@ -213,8 +221,17 @@ public class MainActivity extends AppCompatActivity {
         public boolean onOptionsItemSelected(MenuItem item) {
             switch (item.getItemId()) {
                 case R.id.polupares:
+                    isFavorite = false;
+                    if (moviesSaveInstance != null && moviesSaveInstance.size() > 0){
+                        adapterMovie.notifyItemRangeRemoved(0, adapterMovie.getItemCount());
+                        adapterMovie.submitList(moviesSaveInstance);
+                    } else {
+                        recyclerView.setVisibility(View.INVISIBLE);
+                        executeAsyc(View.VISIBLE, getPagePreference());
+                    }
                     return true;
                 case R.id.favoritos:
+                    preencherFavoritos();
                     return true;
                 case R.id.votados:
                     return true;
@@ -234,6 +251,23 @@ public class MainActivity extends AppCompatActivity {
             SharedPreferences preferences = getActivity().getPreferences(Context.MODE_PRIVATE);
             int defaultValue = 1;
             return preferences.getInt(String.valueOf(R.string.put_page_key), defaultValue);
+        }
+
+        private void preencherFavoritos() {
+            isFavorite = true;
+            recyclerView.setVisibility(View.VISIBLE);
+            adapterMovie.notifyItemRangeRemoved(0, adapterMovie.getItemCount());
+            movieViewModel.getAll().observe(getActivity(), movies -> {
+                adapterMovie.submitList(movies);
+            });
+        }
+
+        private void carregarScroll() {
+            int page = getPagePreference() + 1;
+            savePreference(page);
+            isFavorite = false;
+            isAtualizarList = false;
+            executeAsyc(View.INVISIBLE, page);
         }
 
     }

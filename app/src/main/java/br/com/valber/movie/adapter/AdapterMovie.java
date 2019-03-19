@@ -61,6 +61,10 @@ public class AdapterMovie extends ListAdapter<Movie, AdapterMovie.MyViewHoler> {
         return getItem(positoon);
     }
 
+    public int getSize(){
+        return getItemCount();
+    }
+
     public class MyViewHoler extends RecyclerView.ViewHolder{
         ImageView img_movie;
         Button btn_note;

@@ -7,4 +7,7 @@
 
     //send objeto to class
     <string name="put_page_key">1</string>
+
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
 </resources>
