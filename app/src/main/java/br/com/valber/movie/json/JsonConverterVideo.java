@@ -16,6 +16,6 @@ public class JsonConverterVideo implements JsonDeserializer<Object> {
             popular = json.getAsJsonObject();
         }
 
-        return (new Gson().fromJson(popular, ResultVideo.class));
+        return (new Gson().fromJson(popular, ResultVideoJSON.class));
     }
 }

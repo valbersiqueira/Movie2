@@ -40,6 +40,9 @@ public class MovieVideoJSON implements Parcelable
     private String type;
     private final static long serialVersionUID = 6839334935533342334L;
 
+    public MovieVideoJSON() {
+    }
+
     protected MovieVideoJSON(Parcel in) {
         id = in.readString();
         iso6391 = in.readString();

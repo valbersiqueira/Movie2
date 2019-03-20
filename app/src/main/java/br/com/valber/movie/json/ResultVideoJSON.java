@@ -9,7 +9,7 @@ import com.google.gson.annotations.SerializedName;
 
 import java.util.List;
 
-public class ResultVideo implements Parcelable
+public class ResultVideoJSON implements Parcelable
 {
 
     @SerializedName("id")
@@ -20,7 +20,7 @@ public class ResultVideo implements Parcelable
     private List<MovieVideoJSON> movieVideoJSONS = null;
     private final static long serialVersionUID = -7433522148958862330L;
 
-    protected ResultVideo(Parcel in) {
+    protected ResultVideoJSON(Parcel in) {
         if (in.readByte() == 0) {
             id = null;
         } else {
@@ -29,15 +29,15 @@ public class ResultVideo implements Parcelable
         movieVideoJSONS = in.createTypedArrayList(MovieVideoJSON.CREATOR);
     }
 
-    public static final Creator<ResultVideo> CREATOR = new Creator<ResultVideo>() {
+    public static final Creator<ResultVideoJSON> CREATOR = new Creator<ResultVideoJSON>() {
         @Override
-        public ResultVideo createFromParcel(Parcel in) {
-            return new ResultVideo(in);
+        public ResultVideoJSON createFromParcel(Parcel in) {
+            return new ResultVideoJSON(in);
         }
 
         @Override
-        public ResultVideo[] newArray(int size) {
-            return new ResultVideo[size];
+        public ResultVideoJSON[] newArray(int size) {
+            return new ResultVideoJSON[size];
         }
     };
 

@@ -9,7 +9,7 @@ import com.google.gson.GsonBuilder;
 import br.com.valber.movie.BuildConfig;
 import br.com.valber.movie.json.JsonConverterVideo;
 import br.com.valber.movie.json.MoviesService;
-import br.com.valber.movie.json.ResultVideo;
+import br.com.valber.movie.json.ResultVideoJSON;
 import br.com.valber.movie.utils.ResultAsync;
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -28,7 +28,7 @@ public class AsyncVideo extends AsyncTask<Integer, Void, Void> {
     @Override
     protected Void doInBackground(Integer... integers) {
         Gson gson = new GsonBuilder()
-                .registerTypeAdapter(ResultVideo.class, new JsonConverterVideo())
+                .registerTypeAdapter(ResultVideoJSON.class, new JsonConverterVideo())
                 .create();
 
         Retrofit retrofit = new Retrofit.Builder()
@@ -39,19 +39,19 @@ public class AsyncVideo extends AsyncTask<Integer, Void, Void> {
         Integer id = integers[0];
 
         MoviesService service = retrofit.create(MoviesService.class);
-        Call<ResultVideo> call = service.getVideo(id,BuildConfig.OPEN_MOVIES_MAP_KEY);
+        Call<ResultVideoJSON> call = service.getVideo(id,BuildConfig.OPEN_MOVIES_MAP_KEY);
 
-        call.enqueue(new Callback<ResultVideo>() {
+        call.enqueue(new Callback<ResultVideoJSON>() {
             @Override
-            public void onResponse(Call<ResultVideo> call, Response<ResultVideo> response) {
+            public void onResponse(Call<ResultVideoJSON> call, Response<ResultVideoJSON> response) {
                 if (response.body() != null) {
-                    ResultVideo movieVideo = response.body();
-                    resultAsync.resultMovie(movieVideo.getMovieVideoJSONS());
+                    ResultVideoJSON movieVideo = response.body();
+                    resultAsync.resultMovie(movieVideo);
                 }
             }
 
             @Override
-            public void onFailure(Call<ResultVideo> call, Throwable throwable) {
+            public void onFailure(Call<ResultVideoJSON> call, Throwable throwable) {
                 Log.e(AsyncMovies.class.getSimpleName(), throwable.getMessage());
             }
         });

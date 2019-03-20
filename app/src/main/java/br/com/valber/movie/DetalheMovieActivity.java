@@ -1,7 +1,6 @@
 package br.com.valber.movie;
 
 import android.arch.lifecycle.ViewModelProviders;
-import android.os.AsyncTask;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
@@ -9,36 +8,31 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
 import com.squareup.picasso.Picasso;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import br.com.valber.movie.adapter.AdapterTrailer;
+import br.com.valber.movie.asyncs.AsyncVideo;
 import br.com.valber.movie.database.movie.MovieViewModel;
 import br.com.valber.movie.entity.Movie;
-import br.com.valber.movie.json.JsonConverterVideo;
-import br.com.valber.movie.json.MoviesService;
-import br.com.valber.movie.json.ResultVideo;
+import br.com.valber.movie.json.MovieVideoJSON;
+import br.com.valber.movie.json.ResultVideoJSON;
+import br.com.valber.movie.utils.ResultAsync;
 import br.com.valber.movie.utils.SendObjeto;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.Unbinder;
-import retrofit2.Call;
-import retrofit2.Callback;
-import retrofit2.Response;
-import retrofit2.Retrofit;
-import retrofit2.converter.gson.GsonConverterFactory;
 
 public class DetalheMovieActivity extends AppCompatActivity {
 
@@ -57,7 +51,7 @@ public class DetalheMovieActivity extends AppCompatActivity {
 
     }
 
-    public static class DetailFragment extends Fragment {
+    public static class DetailFragment extends Fragment implements ResultAsync {
 
         private View view;
         private Unbinder unbinder;
@@ -83,26 +77,39 @@ public class DetalheMovieActivity extends AppCompatActivity {
         ImageView imgCard;
 
         @BindView(R.id.recycle_trailers)
-        private RecyclerView recyclerView;
+        RecyclerView recyclerView;
 
         @Nullable
         @Override
         public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
             view = inflater.inflate(R.layout.detail_fragment, container, false);
-
             unbinder = ButterKnife.bind(this, view);
+            setHasOptionsMenu(true);
 
             Picasso.get().load(BuildConfig.OPEN_URL_IMAGEN + movie.getBackdropPath()).into(imagem);
             Picasso.get().load(BuildConfig.OPEN_URL_IMAGEN + movie.getPosterPath()).into(imgCard);
             title.setText(movie.getTitle());
             descricao.setText(movie.getOverview());
             votos.setText(movie.getVoteCount()+"");
-            setHasOptionsMenu(true);
+
+
+            layoutManager = new LinearLayoutManager(getActivity());
+            layoutManager.setOrientation(LinearLayoutManager.HORIZONTAL);
+            recyclerView.setLayoutManager(layoutManager);
+            recyclerView.setHasFixedSize(true);
+            adapterTrailer = new AdapterTrailer(getContext());
+            recyclerView.setAdapter(adapterTrailer);
+            MovieVideoJSON t = new MovieVideoJSON();
+            t.setId("2121");
+            t.setKey("stet");
+            List<MovieVideoJSON> li = new ArrayList<>();
+            adapterTrailer.submitList(li);
+            new AsyncVideo(this).execute(movie.getId());
+
             movieViewModel = ViewModelProviders.of(getActivity()).get(MovieViewModel.class);
             movieViewModel.getMovie(movie).observe(getActivity(), movie1 -> {
                 if (movie1 != null) {
                     isMovieSave = true;
-                    Log.d("TESTE", "passou aqui");
                 } else {
                     isMovieSave = false;
             }
@@ -155,6 +162,16 @@ public class DetalheMovieActivity extends AppCompatActivity {
             }
         }
 
+        @Override
+        public void resultMovie(Object object) {
+            if (object != null) {
+                ResultVideoJSON result = (ResultVideoJSON) object;
+                List<MovieVideoJSON> resultTrailes = result.getMovieVideoJSONS();
+                if (!resultTrailes.isEmpty()) {
+//                    adapterTrailer.submitList(resultTrailes);
+                }
+            }
+        }
     }
 
 }

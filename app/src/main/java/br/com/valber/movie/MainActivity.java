@@ -78,6 +78,8 @@ public class MainActivity extends AppCompatActivity {
         public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable final Bundle savedInstanceState) {
             View view = inflater.inflate(R.layout.fragmente_main, container, false);
 
+
+
             unbinder = ButterKnife.bind(this, view);
 
             layoutManager = new GridLayoutManager(getContext(),
