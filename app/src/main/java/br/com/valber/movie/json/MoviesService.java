@@ -23,5 +23,8 @@ public interface MoviesService {
     Call<ResultVideoJSON> getVideo(@Path("movie_id") Integer movieId,
                                    @Query("api_key") String apiKey);
 
+//    @GET("{movie_id}/reviews")
+//    Call<List<>> getReviews(@Path("movie_id") Integer id,
+//                            @Query("api_key") String apiKey);
 
 }

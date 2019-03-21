@@ -1,6 +1,8 @@
 package br.com.valber.movie;
 
 import android.arch.lifecycle.ViewModelProviders;
+import android.content.Intent;
+import android.net.Uri;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
@@ -93,17 +95,24 @@ public class DetalheMovieActivity extends AppCompatActivity {
             votos.setText(movie.getVoteCount()+"");
 
 
-            layoutManager = new LinearLayoutManager(getActivity());
-            layoutManager.setOrientation(LinearLayoutManager.HORIZONTAL);
+            layoutManager = new LinearLayoutManager(getActivity(), LinearLayoutManager.VERTICAL, false);
             recyclerView.setLayoutManager(layoutManager);
             recyclerView.setHasFixedSize(true);
-            adapterTrailer = new AdapterTrailer(getContext());
+            adapterTrailer = new AdapterTrailer();
             recyclerView.setAdapter(adapterTrailer);
-            MovieVideoJSON t = new MovieVideoJSON();
-            t.setId("2121");
-            t.setKey("stet");
-            List<MovieVideoJSON> li = new ArrayList<>();
-            adapterTrailer.submitList(li);
+
+            List<MovieVideoJSON> m = new ArrayList<>();
+            for (int i = 0; i < 1; i++) {
+                m.add(new MovieVideoJSON());
+            }
+            adapterTrailer.submitList(m);
+            adapterTrailer.setOnclickListen(new AdapterTrailer.ClickMovieListen() {
+                @Override
+                public void itemClickListen(MovieVideoJSON trailer) {
+                    startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse(BuildConfig.OPEN_URL_YOUTUBE_TWO+trailer.getKey())));
+                }
+            });
+
             new AsyncVideo(this).execute(movie.getId());
 
             movieViewModel = ViewModelProviders.of(getActivity()).get(MovieViewModel.class);
@@ -168,7 +177,7 @@ public class DetalheMovieActivity extends AppCompatActivity {
                 ResultVideoJSON result = (ResultVideoJSON) object;
                 List<MovieVideoJSON> resultTrailes = result.getMovieVideoJSONS();
                 if (!resultTrailes.isEmpty()) {
-//                    adapterTrailer.submitList(resultTrailes);
+                    adapterTrailer.submitList(resultTrailes);
                 }
             }
         }
