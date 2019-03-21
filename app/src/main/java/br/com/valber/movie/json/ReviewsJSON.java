@@ -1,31 +1,27 @@
 
 package br.com.valber.movie.json;
 
-import java.util.ArrayList;
-import java.util.List;
 import android.os.Parcel;
 import android.os.Parcelable;
+
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
 public class ReviewsJSON implements Parcelable
 {
 
+    @SerializedName("author")
+    @Expose
+    private String author;
+    @SerializedName("content")
+    @Expose
+    private String content;
     @SerializedName("id")
     @Expose
-    private Long id;
-    @SerializedName("page")
+    private String id;
+    @SerializedName("url")
     @Expose
-    private Long page;
-    @SerializedName("results")
-    @Expose
-    private List<Result> results = new ArrayList<Result>();
-    @SerializedName("total_pages")
-    @Expose
-    private Long totalPages;
-    @SerializedName("total_results")
-    @Expose
-    private Long totalResults;
+    private String url;
     public final static Creator<ReviewsJSON> CREATOR = new Creator<ReviewsJSON>() {
 
 
@@ -44,63 +40,52 @@ public class ReviewsJSON implements Parcelable
     ;
 
     protected ReviewsJSON(Parcel in) {
-        this.id = ((Long) in.readValue((Long.class.getClassLoader())));
-        this.page = ((Long) in.readValue((Long.class.getClassLoader())));
-        in.readList(this.results, (br.com.valber.movie.json.Result.class.getClassLoader()));
-        this.totalPages = ((Long) in.readValue((Long.class.getClassLoader())));
-        this.totalResults = ((Long) in.readValue((Long.class.getClassLoader())));
+        this.author = ((String) in.readValue((String.class.getClassLoader())));
+        this.content = ((String) in.readValue((String.class.getClassLoader())));
+        this.id = ((String) in.readValue((String.class.getClassLoader())));
+        this.url = ((String) in.readValue((String.class.getClassLoader())));
     }
 
     public ReviewsJSON() {
     }
 
-    public Long getId() {
+    public String getAuthor() {
+        return author;
+    }
+
+    public void setAuthor(String author) {
+        this.author = author;
+    }
+
+    public String getContent() {
+        return content;
+    }
+
+    public void setContent(String content) {
+        this.content = content;
+    }
+
+    public String getId() {
         return id;
     }
 
-    public void setId(Long id) {
+    public void setId(String id) {
         this.id = id;
     }
 
-    public Long getPage() {
-        return page;
+    public String getUrl() {
+        return url;
     }
 
-    public void setPage(Long page) {
-        this.page = page;
+    public void setUrl(String url) {
+        this.url = url;
     }
-
-    public List<Result> getResults() {
-        return results;
-    }
-
-    public void setResults(List<Result> results) {
-        this.results = results;
-    }
-
-    public Long getTotalPages() {
-        return totalPages;
-    }
-
-    public void setTotalPages(Long totalPages) {
-        this.totalPages = totalPages;
-    }
-
-    public Long getTotalResults() {
-        return totalResults;
-    }
-
-    public void setTotalResults(Long totalResults) {
-        this.totalResults = totalResults;
-    }
-
 
     public void writeToParcel(Parcel dest, int flags) {
+        dest.writeValue(author);
+        dest.writeValue(content);
         dest.writeValue(id);
-        dest.writeValue(page);
-        dest.writeList(results);
-        dest.writeValue(totalPages);
-        dest.writeValue(totalResults);
+        dest.writeValue(url);
     }
 
     public int describeContents() {
