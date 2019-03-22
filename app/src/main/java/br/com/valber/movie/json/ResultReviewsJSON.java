@@ -18,7 +18,7 @@ public class ResultReviewsJSON implements Parcelable
     @SerializedName("page")
     @Expose
     private Long page;
-    @SerializedName("reviewsJSONS")
+    @SerializedName("results")
     @Expose
     private List<ReviewsJSON> reviewsJSONS = new ArrayList<ReviewsJSON>();
     @SerializedName("total_pages")

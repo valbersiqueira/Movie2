@@ -10,6 +10,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -33,7 +34,6 @@ import br.com.valber.movie.entity.Movie;
 import br.com.valber.movie.json.MovieVideoJSON;
 import br.com.valber.movie.json.ResultReviewsJSON;
 import br.com.valber.movie.json.ResultVideoJSON;
-import br.com.valber.movie.json.ReviewsJSON;
 import br.com.valber.movie.utils.ResultAsync;
 import br.com.valber.movie.utils.ResultReviewsAsync;
 import br.com.valber.movie.utils.SendObjeto;
@@ -208,7 +208,8 @@ public class DetalheMovieActivity extends AppCompatActivity {
         @Override
         public void resultReviews(Object object) {
             ResultReviewsJSON resultReviews = (ResultReviewsJSON) object;
-//            adapterReviews.submitList(resultReviews.getReviewsJSONS());
+            adapterReviews.submitList(resultReviews.getReviewsJSONS());
+            Log.d("REVIEWS", resultReviews.getReviewsJSONS().size()+"");
         }
     }
 
