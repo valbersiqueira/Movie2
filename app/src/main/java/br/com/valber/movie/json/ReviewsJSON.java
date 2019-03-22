@@ -1,11 +1,15 @@
 
 package br.com.valber.movie.json;
 
+import android.os.Build;
 import android.os.Parcel;
 import android.os.Parcelable;
+import android.support.annotation.RequiresApi;
 
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
+
+import java.util.Objects;
 
 public class ReviewsJSON implements Parcelable
 {
@@ -92,4 +96,19 @@ public class ReviewsJSON implements Parcelable
         return  0;
     }
 
+    @RequiresApi(api = Build.VERSION_CODES.KITKAT)
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof ReviewsJSON)) return false;
+        ReviewsJSON that = (ReviewsJSON) o;
+        return Objects.equals(id, that.id);
+    }
+
+    @RequiresApi(api = Build.VERSION_CODES.KITKAT)
+    @Override
+    public int hashCode() {
+
+        return Objects.hash(id);
+    }
 }

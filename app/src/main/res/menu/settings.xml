@@ -4,9 +4,6 @@
     <item android:id="@+id/polupares"
         android:title="Populares" />
 
-    <item android:id="@+id/votados"
-        android:title="Mais votados" />
-
     <item android:id="@+id/favoritos"
         android:title="Favoritos" />
 

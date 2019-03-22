@@ -40,10 +40,10 @@ public class AsyncMovies extends AsyncTask<Integer, Void, Void> {
 
         MoviesService service = retrofit.create(MoviesService.class);
         Call<ResultMovieJSON> call = service.getAllMovies(
-                BuildConfig.OPEN_MOVIES_MAP_KEY,
-                values[0],
-                "pt-BR"
-        );
+                    BuildConfig.OPEN_MOVIES_MAP_KEY,
+                    values[0],
+                    "pt-BR"
+            );
 
         call.enqueue(new Callback<ResultMovieJSON>() {
             @Override

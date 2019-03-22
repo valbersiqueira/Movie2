@@ -40,7 +40,7 @@ public class AdapterTrailer extends ListAdapter<MovieVideoJSON, AdapterTrailer.T
     @Override
     public TrailerViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         View view = LayoutInflater.from(parent.getContext())
-                .inflate(R.layout.iten_trailer, parent, false);
+                .inflate(R.layout.item_trailer, parent, false);
         return new TrailerViewHolder(view);
     }
 

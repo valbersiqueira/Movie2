@@ -42,14 +42,14 @@ public class AsyncReviews extends AsyncTask<Integer, Void, Void> {
         Call<ResultReviewsJSON> call = service.getReviews(
                 values[0],
                 BuildConfig.OPEN_MOVIES_MAP_KEY,
-                "pt-BR"
+                "en-US"
         );
 
         call.enqueue(new Callback<ResultReviewsJSON>() {
             @Override
             public void onResponse(Call<ResultReviewsJSON> call, Response<ResultReviewsJSON> response) {
                 if (response.body() != null)
-                    resultAsync.resultMovie(response.body());
+                    resultAsync.resultReviews(response.body());
             }
 
             @Override

@@ -182,7 +182,6 @@ public class MainActivity extends AppCompatActivity {
         @Override
         public void resultMovie(Object object) {
             progressBar.setVisibility(View.INVISIBLE);
-            recyclerView.setVisibility(View.VISIBLE);
             refreshLayout.setRefreshing(false);
             ResultMovieJSON json = (ResultMovieJSON) object;
             if (moviesSaveInstance == null){
@@ -223,19 +222,20 @@ public class MainActivity extends AppCompatActivity {
         public boolean onOptionsItemSelected(MenuItem item) {
             switch (item.getItemId()) {
                 case R.id.polupares:
+                    adapterMovie.submitList(new ArrayList<>());
+                    adapterMovie.notifyDataSetChanged();
                     isFavorite = false;
                     if (moviesSaveInstance != null && moviesSaveInstance.size() > 0){
                         adapterMovie.notifyItemRangeRemoved(0, adapterMovie.getItemCount());
                         adapterMovie.submitList(moviesSaveInstance);
                     } else {
-                        recyclerView.setVisibility(View.INVISIBLE);
                         executeAsyc(View.VISIBLE, getPagePreference());
                     }
                     return true;
                 case R.id.favoritos:
+                    adapterMovie.submitList(new ArrayList<>());
+                    adapterMovie.notifyDataSetChanged();
                     preencherFavoritos();
-                    return true;
-                case R.id.votados:
                     return true;
                 default:
                     return true;
@@ -257,7 +257,6 @@ public class MainActivity extends AppCompatActivity {
 
         private void preencherFavoritos() {
             isFavorite = true;
-            recyclerView.setVisibility(View.VISIBLE);
             adapterMovie.notifyItemRangeRemoved(0, adapterMovie.getItemCount());
             movieViewModel.getAll().observe(getActivity(), movies -> {
                 adapterMovie.submitList(movies);

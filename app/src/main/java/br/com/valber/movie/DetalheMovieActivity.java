@@ -24,13 +24,18 @@ import com.squareup.picasso.Picasso;
 import java.util.ArrayList;
 import java.util.List;
 
+import br.com.valber.movie.adapter.AdapterReviews;
 import br.com.valber.movie.adapter.AdapterTrailer;
+import br.com.valber.movie.asyncs.AsyncReviews;
 import br.com.valber.movie.asyncs.AsyncVideo;
 import br.com.valber.movie.database.movie.MovieViewModel;
 import br.com.valber.movie.entity.Movie;
 import br.com.valber.movie.json.MovieVideoJSON;
+import br.com.valber.movie.json.ResultReviewsJSON;
 import br.com.valber.movie.json.ResultVideoJSON;
+import br.com.valber.movie.json.ReviewsJSON;
 import br.com.valber.movie.utils.ResultAsync;
+import br.com.valber.movie.utils.ResultReviewsAsync;
 import br.com.valber.movie.utils.SendObjeto;
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -53,7 +58,7 @@ public class DetalheMovieActivity extends AppCompatActivity {
 
     }
 
-    public static class DetailFragment extends Fragment implements ResultAsync {
+    public static class DetailFragment extends Fragment implements ResultAsync, ResultReviewsAsync {
 
         private View view;
         private Unbinder unbinder;
@@ -61,7 +66,9 @@ public class DetalheMovieActivity extends AppCompatActivity {
         private MovieViewModel movieViewModel;
         private Boolean isMovieSave = false;
         private AdapterTrailer adapterTrailer;
+        private AdapterReviews adapterReviews;
         private LinearLayoutManager layoutManager;
+        private LinearLayoutManager layoutManagerReviews;
 
         @BindView(R.id.txt_title_dtl)
         TextView title;
@@ -81,6 +88,10 @@ public class DetalheMovieActivity extends AppCompatActivity {
         @BindView(R.id.recycle_trailers)
         RecyclerView recyclerView;
 
+        @BindView(R.id.recy_reviews)
+        RecyclerView recyclerViewReviews;
+
+
         @Nullable
         @Override
         public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
@@ -95,17 +106,9 @@ public class DetalheMovieActivity extends AppCompatActivity {
             votos.setText(movie.getVoteCount()+"");
 
 
-            layoutManager = new LinearLayoutManager(getActivity(), LinearLayoutManager.VERTICAL, false);
-            recyclerView.setLayoutManager(layoutManager);
-            recyclerView.setHasFixedSize(true);
-            adapterTrailer = new AdapterTrailer();
-            recyclerView.setAdapter(adapterTrailer);
+            this.startRecyTrailer();
+            this.startRecyReviews();
 
-            List<MovieVideoJSON> m = new ArrayList<>();
-            for (int i = 0; i < 1; i++) {
-                m.add(new MovieVideoJSON());
-            }
-            adapterTrailer.submitList(m);
             adapterTrailer.setOnclickListen(new AdapterTrailer.ClickMovieListen() {
                 @Override
                 public void itemClickListen(MovieVideoJSON trailer) {
@@ -113,7 +116,9 @@ public class DetalheMovieActivity extends AppCompatActivity {
                 }
             });
 
+
             new AsyncVideo(this).execute(movie.getId());
+            new AsyncReviews(this).execute(movie.getId());
 
             movieViewModel = ViewModelProviders.of(getActivity()).get(MovieViewModel.class);
             movieViewModel.getMovie(movie).observe(getActivity(), movie1 -> {
@@ -180,6 +185,30 @@ public class DetalheMovieActivity extends AppCompatActivity {
                     adapterTrailer.submitList(resultTrailes);
                 }
             }
+        }
+
+        private void startRecyReviews() {
+            layoutManagerReviews = new LinearLayoutManager(getActivity(), LinearLayoutManager.VERTICAL, false);
+            recyclerViewReviews.setLayoutManager(layoutManagerReviews);
+            recyclerViewReviews.setNestedScrollingEnabled(false);
+            recyclerViewReviews.setHasFixedSize(false);
+            adapterReviews = new AdapterReviews();
+            recyclerViewReviews.setAdapter(adapterReviews);
+        }
+
+        private void startRecyTrailer() {
+            layoutManager = new LinearLayoutManager(getActivity(), LinearLayoutManager.VERTICAL, false);
+            recyclerView.setLayoutManager(layoutManager);
+            recyclerView.setNestedScrollingEnabled(false);
+            recyclerView.setHasFixedSize(false);
+            adapterTrailer = new AdapterTrailer();
+            recyclerView.setAdapter(adapterTrailer);
+        }
+
+        @Override
+        public void resultReviews(Object object) {
+            ResultReviewsJSON resultReviews = (ResultReviewsJSON) object;
+//            adapterReviews.submitList(resultReviews.getReviewsJSONS());
         }
     }
 

@@ -28,4 +28,9 @@ public interface MoviesService {
                                        @Query("api_key") String apiKey,
                                        @Query("language") String language);
 
+    @GET("top_rated")
+    Call<ResultMovieJSON> getMaisVotados(@Query("api_key") String apiKey,
+                                           @Query("page") Integer page,
+                                           @Query("language") String language);
+
 }
