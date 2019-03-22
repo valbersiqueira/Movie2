@@ -209,7 +209,6 @@ public class DetalheMovieActivity extends AppCompatActivity {
         public void resultReviews(Object object) {
             ResultReviewsJSON resultReviews = (ResultReviewsJSON) object;
             adapterReviews.submitList(resultReviews.getReviewsJSONS());
-            Log.d("REVIEWS", resultReviews.getReviewsJSONS().size()+"");
         }
     }
 
