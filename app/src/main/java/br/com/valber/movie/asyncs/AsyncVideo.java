@@ -46,7 +46,7 @@ public class AsyncVideo extends AsyncTask<Integer, Void, Void> {
             public void onResponse(Call<ResultVideoJSON> call, Response<ResultVideoJSON> response) {
                 if (response.body() != null) {
                     ResultVideoJSON movieVideo = response.body();
-                    resultAsync.resultMovie(movieVideo);
+                    resultAsync.resultMovie(movieVideo, "");
                 }
             }
 

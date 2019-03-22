@@ -177,7 +177,7 @@ public class DetalheMovieActivity extends AppCompatActivity {
         }
 
         @Override
-        public void resultMovie(Object object) {
+        public void resultMovie(Object object, String consultar) {
             if (object != null) {
                 ResultVideoJSON result = (ResultVideoJSON) object;
                 List<MovieVideoJSON> resultTrailes = result.getMovieVideoJSONS();

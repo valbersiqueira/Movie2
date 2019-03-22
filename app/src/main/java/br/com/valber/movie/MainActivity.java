@@ -55,13 +55,14 @@ public class MainActivity extends AppCompatActivity {
     public static class FragmenteMain extends Fragment implements ResultAsync {
 
         public static final String OBJ_SAVE_INSTANCE = "OBJ_SAVE_INSTANCE";
+        public static final String POPULAR = "POPULAR";
 
         private MovieViewModel movieViewModel;
         private Unbinder unbinder;
         private GridLayoutManager layoutManager;
         private AdapterMovie adapterMovie;
         private List<Movie> moviesSaveInstance;
-        private Boolean isFavorite= false;
+        private Boolean isFavorite = false;
         private Boolean isAtualizarList = true;
 
         @BindView(R.id.swip_refresh)
@@ -77,8 +78,6 @@ public class MainActivity extends AppCompatActivity {
         @Override
         public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable final Bundle savedInstanceState) {
             View view = inflater.inflate(R.layout.fragmente_main, container, false);
-
-
 
             unbinder = ButterKnife.bind(this, view);
 
@@ -96,7 +95,7 @@ public class MainActivity extends AppCompatActivity {
                 }
             });
             recyclerView.swapAdapter(adapterMovie, false);
-            if (getPagePreference() != 1){
+            if (getPagePreference() != 1) {
                 savePreference(1);
             }
             final int page = getPagePreference();
@@ -105,7 +104,7 @@ public class MainActivity extends AppCompatActivity {
             if (savedInstanceState != null) {
                 moviesSaveInstance = savedInstanceState.getParcelableArrayList(OBJ_SAVE_INSTANCE);
             } else {
-                executeAsyc(View.VISIBLE, page);
+                executeAsyc(View.VISIBLE, page, "");
             }
 
             refreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
@@ -113,7 +112,7 @@ public class MainActivity extends AppCompatActivity {
                 public void onRefresh() {
                     if (!isFavorite) {
                         isAtualizarList = true;
-                        executeAsyc(View.INVISIBLE, 1);
+                        executeAsyc(View.INVISIBLE, 1, POPULAR);
                     } else {
                         refreshLayout.setRefreshing(false);
                     }
@@ -174,23 +173,27 @@ public class MainActivity extends AppCompatActivity {
             super.onSaveInstanceState(outState);
         }
 
-        private void executeAsyc(int valueProgressBar, int page) {
+        private void executeAsyc(int valueProgressBar, int page, String consultar) {
             progressBar.setVisibility(valueProgressBar);
-            new AsyncMovies(this).execute(page);
+            new AsyncMovies(this, consultar).execute(page);
         }
 
         @Override
-        public void resultMovie(Object object) {
+        public void resultMovie(Object object, String consulta) {
             progressBar.setVisibility(View.INVISIBLE);
             refreshLayout.setRefreshing(false);
             ResultMovieJSON json = (ResultMovieJSON) object;
-            if (moviesSaveInstance == null){
-                moviesSaveInstance = preencherMovieBd(json.getMovies());
-            } else {
-                if (isAtualizarList) {
-                    moviesSaveInstance.clear();
+            if (consulta.equals(POPULAR)) {
+                if (moviesSaveInstance == null) {
+                    moviesSaveInstance = preencherMovieBd(json.getMovies());
+                } else {
+                    if (isAtualizarList) {
+                        moviesSaveInstance.clear();
+                    }
+                    moviesSaveInstance.addAll(preencherMovieBd(json.getMovies()));
                 }
-                moviesSaveInstance.addAll(preencherMovieBd(json.getMovies()));
+            } else {
+                moviesSaveInstance = preencherMovieBd(json.getMovies());
             }
             adapterMovie.submitList(moviesSaveInstance);
         }
@@ -225,11 +228,11 @@ public class MainActivity extends AppCompatActivity {
                     adapterMovie.submitList(new ArrayList<>());
                     adapterMovie.notifyDataSetChanged();
                     isFavorite = false;
-                    if (moviesSaveInstance != null && moviesSaveInstance.size() > 0){
+                    if (moviesSaveInstance != null && moviesSaveInstance.size() > 0) {
                         adapterMovie.notifyItemRangeRemoved(0, adapterMovie.getItemCount());
                         adapterMovie.submitList(moviesSaveInstance);
                     } else {
-                        executeAsyc(View.VISIBLE, getPagePreference());
+                        executeAsyc(View.VISIBLE, getPagePreference(), POPULAR);
                     }
                     return true;
                 case R.id.favoritos:
@@ -237,19 +240,23 @@ public class MainActivity extends AppCompatActivity {
                     adapterMovie.notifyDataSetChanged();
                     preencherFavoritos();
                     return true;
+                case R.id.top_rated:
+                    adapterMovie.submitList(new ArrayList<>());
+                    adapterMovie.notifyDataSetChanged();
+                    executeAsyc(View.VISIBLE, 1, "");
                 default:
                     return true;
             }
         }
 
-        private void savePreference(int value){
+        private void savePreference(int value) {
             SharedPreferences preferences = getActivity().getPreferences(Context.MODE_PRIVATE);
             SharedPreferences.Editor editor = preferences.edit();
             editor.putInt(String.valueOf(R.string.put_page_key), value);
             editor.commit();
         }
 
-        private int getPagePreference(){
+        private int getPagePreference() {
             SharedPreferences preferences = getActivity().getPreferences(Context.MODE_PRIVATE);
             int defaultValue = 1;
             return preferences.getInt(String.valueOf(R.string.put_page_key), defaultValue);
@@ -268,7 +275,7 @@ public class MainActivity extends AppCompatActivity {
             savePreference(page);
             isFavorite = false;
             isAtualizarList = false;
-            executeAsyc(View.INVISIBLE, page);
+            executeAsyc(View.INVISIBLE, page, POPULAR);
         }
 
     }

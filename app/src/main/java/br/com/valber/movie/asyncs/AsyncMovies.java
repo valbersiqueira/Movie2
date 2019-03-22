@@ -22,9 +22,11 @@ public class AsyncMovies extends AsyncTask<Integer, Void, Void> {
 
     private ResultAsync resultAsync;
     public static final String LOG = AsyncMovies.class.getSimpleName();
+    private String consultar;
 
-    public AsyncMovies(final ResultAsync resultAsync) {
+    public AsyncMovies(final ResultAsync resultAsync, String consultar) {
         this.resultAsync = resultAsync;
+        this.consultar = consultar;
     }
 
     @Override
@@ -39,17 +41,26 @@ public class AsyncMovies extends AsyncTask<Integer, Void, Void> {
                 .build();
 
         MoviesService service = retrofit.create(MoviesService.class);
-        Call<ResultMovieJSON> call = service.getAllMovies(
+        Call<ResultMovieJSON> call;
+        if (consultar.equals("POPUPAR")) {
+            call = service.getAllMovies(
                     BuildConfig.OPEN_MOVIES_MAP_KEY,
                     values[0],
                     "pt-BR"
             );
+        } else {
+            call = service.getMaisVotados(
+                    BuildConfig.OPEN_MOVIES_MAP_KEY,
+                    values[0],
+                    "pt-BR"
+            );
+        }
 
         call.enqueue(new Callback<ResultMovieJSON>() {
             @Override
             public void onResponse(Call<ResultMovieJSON> call, Response<ResultMovieJSON> response) {
                 if (response.body() != null)
-                    resultAsync.resultMovie(response.body());
+                    resultAsync.resultMovie(response.body(), consultar);
             }
 
             @Override
