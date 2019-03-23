@@ -104,7 +104,7 @@ public class MainActivity extends AppCompatActivity {
             if (savedInstanceState != null) {
                 moviesSaveInstance = savedInstanceState.getParcelableArrayList(OBJ_SAVE_INSTANCE);
             } else {
-                executeAsyc(View.VISIBLE, page, "");
+                executeAsyc(View.VISIBLE, page, "POPULAR");
             }
 
             refreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
@@ -184,14 +184,7 @@ public class MainActivity extends AppCompatActivity {
             refreshLayout.setRefreshing(false);
             ResultMovieJSON json = (ResultMovieJSON) object;
             if (consulta.equals(POPULAR)) {
-                if (moviesSaveInstance == null) {
-                    moviesSaveInstance = preencherMovieBd(json.getMovies());
-                } else {
-                    if (isAtualizarList) {
-                        moviesSaveInstance.clear();
-                    }
-                    moviesSaveInstance.addAll(preencherMovieBd(json.getMovies()));
-                }
+               moviesSaveInstance = preencherMovieBd(json.getMovies());
             } else {
                 moviesSaveInstance = preencherMovieBd(json.getMovies());
             }
@@ -228,12 +221,7 @@ public class MainActivity extends AppCompatActivity {
                     adapterMovie.submitList(new ArrayList<>());
                     adapterMovie.notifyDataSetChanged();
                     isFavorite = false;
-                    if (moviesSaveInstance != null && moviesSaveInstance.size() > 0) {
-                        adapterMovie.notifyItemRangeRemoved(0, adapterMovie.getItemCount());
-                        adapterMovie.submitList(moviesSaveInstance);
-                    } else {
-                        executeAsyc(View.VISIBLE, getPagePreference(), POPULAR);
-                    }
+                    executeAsyc(View.VISIBLE, getPagePreference(), POPULAR);
                     return true;
                 case R.id.favoritos:
                     adapterMovie.submitList(new ArrayList<>());
@@ -241,6 +229,7 @@ public class MainActivity extends AppCompatActivity {
                     preencherFavoritos();
                     return true;
                 case R.id.top_rated:
+                    isFavorite = false;
                     adapterMovie.submitList(new ArrayList<>());
                     adapterMovie.notifyDataSetChanged();
                     executeAsyc(View.VISIBLE, 1, "");

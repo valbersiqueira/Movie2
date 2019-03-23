@@ -42,7 +42,7 @@ public class AsyncMovies extends AsyncTask<Integer, Void, Void> {
 
         MoviesService service = retrofit.create(MoviesService.class);
         Call<ResultMovieJSON> call;
-        if (consultar.equals("POPUPAR")) {
+        if (consultar.equals("POPULAR")) {
             call = service.getAllMovies(
                     BuildConfig.OPEN_MOVIES_MAP_KEY,
                     values[0],
